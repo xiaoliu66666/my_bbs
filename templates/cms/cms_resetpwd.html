@@ -1,0 +1,42 @@
+{% from 'common/_macros.html' import static %}
+
+{% extends "cms/cms_base.html" %}
+
+{% block title %}
+修改密码
+{% endblock %}
+
+{% block head %}
+<script src="{{ static('cms/js/resetpwd.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+{{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+<form class="form-horizontal" method="post">
+    <div class="form-group">
+        <label for="oldPassword" class="col-sm-2 control-label">旧密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="oldPassword" placeholder="请输入旧密码" name="oldpwd">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="newPassword" class="col-sm-2 control-label">新密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="newPassword" placeholder="请输入新密码" name="newpwd">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword" class="col-sm-2 control-label">确认密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="confirmPassword" placeholder="请确认新密码" name="newpwd2">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" id="submit">立即保存</button>
+    </div>
+</form>
+{% endblock %}

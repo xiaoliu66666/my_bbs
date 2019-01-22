@@ -1,0 +1,37 @@
+{% extends "cms/cms_base.html" %}
+
+{% block title %}
+个人信息
+{% endblock %}
+
+{% block page_title %}
+  {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+    {% set u=g.cms_user %}
+    <table class="table table-bordered">
+        <tbody>
+        <tr>
+            <td>用户名：</td>
+            <td>{{ u.username }}</td>
+        </tr>
+        <tr>
+            <td>邮箱：</td>
+            <td>{{ u.email }}</td>
+        </tr>
+        <tr>
+            <td>角色：</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>权限</td>
+            <td>无</td>
+        </tr>
+        <tr>
+            <td>注册时间：</td>
+            <td>{{ u.join_time }}</td>
+        </tr>
+      </tbody>
+    </table>
+{% endblock %}

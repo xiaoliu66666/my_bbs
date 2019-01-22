@@ -1,6 +1,7 @@
 from flask import Flask
 import config
 from exts import db
+from flask_wtf import CSRFProtect
 
 
 def create_app():
@@ -16,6 +17,7 @@ def create_app():
     app.register_blueprint(front)
 
     db.init_app(app)
+    CSRFProtect(app)
 
     return app
 
