@@ -12,8 +12,12 @@ from flask import (
     g,
 )
 
-from utils import log, xjson
-from .forms import LoginForm, ResetPwdForm
+from utils import log, xjson, cache
+from .forms import (
+    LoginForm,
+    ResetPwdForm,
+    ResetEmailForm,
+)
 from .models import CMSUser
 from .decorators import login_required
 from config import CMS_USER_ID
@@ -47,12 +51,12 @@ def email_captcha():
         recipients=[email],
         body="验证码是：{}".format(captcha)
     )
-
     try:
         mail.send(message)
     except:
         return xjson.server_error("服务器错误")
 
+    cache.set(email, captcha)
     return xjson.success("发送成功")
 
 
@@ -132,7 +136,15 @@ class ResetEmailView(views.MethodView):
         return render_template("cms/cms_resetemail.html")
 
     def post(self):
-        ...
+        form = ResetEmailForm(request.form)
+        if form.validate():
+            email = form.email.data
+            g.cms_user.email = email
+            db.session.commit()
+            return xjson.success("修改邮箱成功")
+        else:
+            msg = form.get_error()
+            return xjson.params_error(msg)
 
 
 main.add_url_rule("/login/", view_func=LoginView.as_view("login"))

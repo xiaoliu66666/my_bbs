@@ -1,6 +1,7 @@
 from wtforms import (
     StringField,
     IntegerField,
+    ValidationError,
 )
 from wtforms.validators import (
     Email,
@@ -10,6 +11,8 @@ from wtforms.validators import (
 )
 
 from apps import BaseForm
+from utils import cache, log
+from flask import g
 
 
 class LoginForm(BaseForm):
@@ -24,3 +27,22 @@ class ResetPwdForm(BaseForm):
     oldpwd = StringField(validators=[Length(6, 30, message='密码长度6-30')])
     newpwd = StringField(validators=[Length(6, 30, message='密码长度6-30')])
     newpwd2 = StringField(validators=[EqualTo('newpwd', message='新密码输入不一致')])
+
+
+class ResetEmailForm(BaseForm):
+    email = StringField(validators=[Email(message="请输入正确的邮箱")])
+    captcha = StringField(validators=[Length(6, 6, message='验证码长度不符')])
+
+    def validate_captcha(self, filed):
+        captcha = filed.data.lower()
+        email = self.email.data
+        captcha_cache = cache.get(email).lower()
+        if captcha_cache is None or captcha_cache != captcha:
+            raise ValidationError("验证码错误")
+
+    def validate_email(self, field):
+        email = field.data
+        user = g.cms_user
+        # log("user.email：", user.email, "表单中的email：", email)
+        if email == user.email:
+            raise ValidationError("邮箱重复")

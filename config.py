@@ -19,7 +19,7 @@ MAIL_PORT = '587'
 MAIL_USE_TLS = True
 # MAIL_USE_SSL : default False
 MAIL_USERNAME = "767550269@qq.com"
-MAIL_PASSWORD = "vliytlcmvvizbbdi"
+MAIL_PASSWORD = "lgqkqhxiztibbdag"
 MAIL_DEFAULT_SENDER = "767550269@qq.com"
 
 

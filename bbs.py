@@ -4,6 +4,8 @@ from exts import db, mail
 from flask_wtf import CSRFProtect
 
 
+csrf = CSRFProtect()
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
@@ -18,7 +20,7 @@ def create_app():
 
     db.init_app(app)
     mail.init_app(app)
-    CSRFProtect(app)
+    csrf.init_app(app)
 
     return app
 
