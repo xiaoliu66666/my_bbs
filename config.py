@@ -13,6 +13,13 @@ DB_URI = "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(DB_USERNAME, DB_PA
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
+# 发送邮件的服务器配置
+MAIL_SERVER = 'smtp.qq.com'
+MAIL_PORT = '587'
+MAIL_USE_TLS = True
+# MAIL_USE_SSL : default False
+MAIL_USERNAME = "767550269@qq.com"
+MAIL_PASSWORD = "vliytlcmvvizbbdi"
+MAIL_DEFAULT_SENDER = "767550269@qq.com"
 
 

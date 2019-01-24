@@ -1,0 +1,52 @@
+{% from 'common/_macros.html' import static %}
+
+{% extends "cms/cms_base.html" %}
+
+{% block title %}
+修改邮箱
+{% endblock %}
+
+{% block head %}
+<style>
+
+.form-container{
+    width:300px;
+}
+
+</style>
+
+<script src="{{ static('cms/js/resetemail.js') }}"></script>
+{% endblock %}
+
+{% block page_title %}
+{{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+<form method="post">
+    <div class="form-container">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="email" class="form-control" placeholder="新的邮箱" name="email">
+                <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="captcha-btn">
+                            <a href="">获取验证码</a>
+                        </button>
+                    </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="填写验证码" name="captcha">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <button type="submit" class="btn btn-primary" id="submit">立即修改</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

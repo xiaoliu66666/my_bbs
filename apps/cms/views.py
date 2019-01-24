@@ -1,3 +1,6 @@
+import string
+import random
+
 from flask import (
     Blueprint,
     render_template,
@@ -6,7 +9,6 @@ from flask import (
     redirect,
     url_for,
     session,
-    jsonify,
     g,
 )
 
@@ -15,7 +17,9 @@ from .forms import LoginForm, ResetPwdForm
 from .models import CMSUser
 from .decorators import login_required
 from config import CMS_USER_ID
-from exts import db
+from exts import db, mail
+from flask_mail import Message
+
 
 main = Blueprint("cms", __name__, url_prefix="/cms")
 
@@ -24,6 +28,32 @@ main = Blueprint("cms", __name__, url_prefix="/cms")
 @login_required
 def index():
     return render_template("cms/cms_index.html")
+
+
+@main.route("/email_captcha/")
+@login_required
+def email_captcha():
+    # url 应该是：/email_captcha/?email=xxxxx
+    email = request.args.get('email')
+    if email is None:
+        return xjson.params_error("邮箱为空")
+
+    # 成功传入email参数
+    s = list(string.ascii_letters)
+    s.extend([str(i) for i in range(0, 10)])
+    captcha = "".join(random.sample(s, 6))
+    message = Message(
+        "修改邮箱的验证码",
+        recipients=[email],
+        body="验证码是：{}".format(captcha)
+    )
+
+    try:
+        mail.send(message)
+    except:
+        return xjson.server_error("服务器错误")
+
+    return xjson.success("发送成功")
 
 
 @main.route("/profile/")
@@ -71,8 +101,8 @@ class LoginView(views.MethodView):
 
 
 class ResetPwdView(views.MethodView):
-
     decorators = [login_required]
+
     def get(self):
         return render_template("cms/cms_resetpwd.html")
 
@@ -95,5 +125,16 @@ class ResetPwdView(views.MethodView):
             return xjson.params_error(message)
 
 
+class ResetEmailView(views.MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template("cms/cms_resetemail.html")
+
+    def post(self):
+        ...
+
+
 main.add_url_rule("/login/", view_func=LoginView.as_view("login"))
 main.add_url_rule("/resetpwd/", view_func=ResetPwdView.as_view("resetpwd"))
+main.add_url_rule("/resetemail/", view_func=ResetEmailView.as_view("resetemail"))
