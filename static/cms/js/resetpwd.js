@@ -19,10 +19,22 @@ $(function () {
                 'newpwd2': newpwd2
             },
             'success': function (data) {
-                console.log(data);
+                //根据状态码判断
+                if (data['code'] === 200){
+                    //弹出成功的提示框，提示语是从后台传过来的message
+                    bbsalert.alertSuccessToast(data['message']);
+                    oldpwdE.val('');   //完成请求后把表单输入的值清空
+                    newpwdE.val('');
+                    newpwd2E.val('');
+                }else{
+                    bbsalert.alertError(data['message']);
+                    oldpwdE.val('');
+                    newpwdE.val('');
+                    newpwd2E.val('');
+                }
             },
             'fail': function (error) {
-                console.log(error);
+                bbsalert.alertNetworkError();
             }
         });
     });
