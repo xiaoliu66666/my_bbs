@@ -22,11 +22,19 @@
         </tr>
         <tr>
             <td>角色：</td>
-            <td>1</td>
+            <td>{% for role in u.roles %}
+                    {{ role.name }}
+                    {% if not loop.last%}, {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td>权限</td>
-            <td>无</td>
+            <td>{% for role in u.roles %}
+                    {{ role.desc }}
+                    {% if not loop.last%}/ {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td>注册时间：</td>

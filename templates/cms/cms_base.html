@@ -31,6 +31,7 @@
 
 </head>
 <body class="sidebar-fixed header-fixed">
+{% set u=g.cms_user %}
 <div class="page-wrapper">
     <nav class="navbar page-header">
         <a href="#" class="btn btn-link sidebar-mobile-toggle d-md-none mr-auto">
@@ -46,31 +47,20 @@
         </a>
 
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item d-md-down-none">
-                <a href="#">
-                    <i class="fa fa-bell"></i>
-                    <span class="badge badge-pill badge-danger"></span>
-                </a>
-            </li>
-
-            <li class="nav-item d-md-down-none">
-                <a href="#">
-                    <i class="fa fa-envelope-open"></i>
-                    <span class="badge badge-pill badge-danger"></span>
-                </a>
-            </li>
-
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
                    aria-expanded="false">
                     <img src="{{ static('cms/imgs/avatar-1.png') }}" class="avatar avatar-sm"
                          alt="logo">
                     <span class="large ml-1 d-md-down-none">
-                        {{ g.cms_user.username }}
+                        {{ u.username }}
                     </span>
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{{ url_for('.profile')}}" class="dropdown-item">
+                        <i class="fa fa-lock"></i> 个人信息
+                    </a>
 
                     <a href="{{ url_for('.logout')}}" class="dropdown-item">
                         <i class="fa fa-lock"></i> 注销
@@ -117,88 +107,54 @@
                             </li>
                         </ul>
                     </li>
-
-                    <li class="nav-item nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle">
-                            <i class="icon icon-energy"></i> 帖子管理 <i class="fa fa-caret-left"></i>
-                        </a>
-
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a href="alerts.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Alerts
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="buttons.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Buttons
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="cards.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Cards
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="modals.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Modals
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="tabs.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Tabs
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="progress-bars.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Progress Bars
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="widgets.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Widgets
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle">
-                            <i class="icon icon-graph"></i> 评论管理 <i class="fa fa-caret-left"></i>
-                        </a>
-
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a href="chartjs.html" class="nav-link">
-                                    <i class="icon icon-graph"></i> Chart.js
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
+                    {% if u.has_permission(CMSPersmission.POSTER) %}
                     <li class="nav-item">
-                        <a href="forms.html" class="nav-link">
+                        <a href="{{ url_for('.posts') }}" class="nav-link">
+                            <i class="icon icon-energy"></i> 帖子管理
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if u.has_permission(CMSPersmission.COMMENTER) %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('.comments') }}" class="nav-link">
+                            <i class="icon icon-graph"></i> 评论管理
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if u.has_permission(CMSPersmission.BOARDER) %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('.boards') }}" class="nav-link">
                             <i class="icon icon-puzzle"></i> 板块管理
                         </a>
                     </li>
+                    {% endif %}
 
+                    {% if u.has_permission(CMSPersmission.FRONTUSER) %}
                     <li class="nav-item">
-                        <a href="tables.html" class="nav-link">
-                            <i class="icon icon-grid"></i> 用户管理
+                        <a href="{{ url_for('.fusers') }}" class="nav-link">
+                            <i class="icon icon-grid"></i> 前台用户管理
                         </a>
                     </li>
+                    {% endif %}
 
+                    {% if u.has_permission(CMSPersmission.CMSUSER) %}
                     <li class="nav-item">
-                        <a href="tables.html" class="nav-link">
+                        <a href="{{ url_for('.users') }}" class="nav-link">
                             <i class="icon icon-grid"></i> CMS用户管理
                         </a>
                     </li>
+                    {% endif %}
+
+                    {% if u.is_developer %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('.roles') }}" class="nav-link">
+                            <i class="icon icon-grid"></i> CMS用户组管理
+                        </a>
+                    </li>
+                    {% endif %}
+
                 </ul>
             </nav>
         </div>

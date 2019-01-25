@@ -18,12 +18,11 @@ from .forms import (
     ResetPwdForm,
     ResetEmailForm,
 )
-from .models import CMSUser
-from .decorators import login_required
+from .models import CMSUser, CMSPersmission
+from .decorators import login_required, permission_required
 from config import CMS_USER_ID
 from exts import db, mail
 from flask_mail import Message
-
 
 main = Blueprint("cms", __name__, url_prefix="/cms")
 
@@ -64,6 +63,48 @@ def email_captcha():
 @login_required
 def profile():
     return render_template("cms/cms_profile.html")
+
+
+@main.route("/posts/")
+@login_required
+@permission_required(CMSPersmission.POSTER)
+def posts():
+    return render_template("cms/cms_posts.html")
+
+
+@main.route("/comments/")
+@login_required
+@permission_required(CMSPersmission.COMMENTER)
+def comments():
+    return render_template("cms/cms_comments.html")
+
+
+@main.route("/boards/")
+@login_required
+@permission_required(CMSPersmission.BOARDER)
+def boards():
+    return render_template("cms/cms_boards.html")
+
+
+@main.route("/fusers/")
+@login_required
+@permission_required(CMSPersmission.FRONTUSER)
+def fusers():
+    return render_template("cms/cms_fusers.html")
+
+
+@main.route("/users/")
+@login_required
+@permission_required(CMSPersmission.CMSUSER)
+def users():
+    return render_template("cms/cms_users.html")
+
+
+@main.route("/roles/")
+@login_required
+@permission_required(CMSPersmission.ALL_PERMISSION)
+def roles():
+    return render_template("cms/cms_roles.html")
 
 
 @main.route("/logout/")
