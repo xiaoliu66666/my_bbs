@@ -12,7 +12,7 @@ from wtforms.validators import (
 
 from apps import BaseForm
 from utils import cache, log
-from flask import g
+from .models import CMSUser
 
 
 class LoginForm(BaseForm):
@@ -41,8 +41,7 @@ class ResetEmailForm(BaseForm):
             raise ValidationError("验证码错误")
 
     def validate_email(self, field):
-        email = field.data
-        user = g.cms_user
+        user = CMSUser.query.filter_by(email=field.data).first()
         # log("user.email：", user.email, "表单中的email：", email)
-        if email == user.email:
+        if user is not None:
             raise ValidationError("邮箱重复")

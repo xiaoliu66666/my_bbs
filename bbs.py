@@ -6,6 +6,7 @@ from flask_wtf import CSRFProtect
 
 csrf = CSRFProtect()
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
