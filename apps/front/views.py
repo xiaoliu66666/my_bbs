@@ -18,17 +18,6 @@ def index():
     return "front index"
 
 
-@main.route("/captcha/")
-def graph_capcha():
-    text, image = Captcha.gene_graph_captcha()
-    out = BytesIO()
-    image.save(out, "png")
-    out.seek(0)
-    resp = make_response(out.read())
-    resp.content_type = 'image/png'
-    return resp
-
-
 class RegisterView(views.MethodView):
     def get(self):
         return render_template('front/front_register.html')
