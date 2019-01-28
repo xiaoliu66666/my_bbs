@@ -1,0 +1,61 @@
+{% from 'common/_macros.html' import static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>登录</title>
+
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ static('front/css/front_signbase.css') }}">
+    <link rel="stylesheet" href="{{ static('common/sweetalert/sweetalert.css')}}">
+
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ static('front/js/front_login.js') }}"></script>
+    <script src="{{ static('common/js/bbsajax.js') }}"></script>
+    <script src="{{ static('common/sweetalert/sweetalert.min.js')}}"></script>
+    <script src="{{ static('common/sweetalert/bbsalert.js')}}"></script>
+    <style>
+        .resetpwd{
+        float: right;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="out-box">
+    <h1 class="page-title">登录</h1>
+    <div class="form-box">
+
+        <div class="form-group">
+            <input type="text" class="form-control" name="telephone" placeholder="手机号码">
+        </div>
+
+        <div class="form-group">
+            <input type="password" class="form-control" name="password" placeholder="密码">
+        </div>
+
+        <div class="check-box">
+            <label for="remember">
+                <input type="checkbox" id="remember" name="remember" value="1">记住我
+            </label>
+        </div>
+
+        <div class="form-group">
+            <span style="display:none;" id="return-to-span">{{ return_to }}</span>
+            <button class="btn btn-warning btn-block" id="submit-btn">登录</button>
+        </div>
+
+        <div class="form-group">
+            <a href="{{ url_for('.register') }}" class="register-link">没有账号？立即注册</a>
+            <a href="" class="resetpwd">找回密码</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

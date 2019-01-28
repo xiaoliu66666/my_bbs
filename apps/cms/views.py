@@ -121,7 +121,6 @@ class LoginView(views.MethodView):
     def post(self):
         form = LoginForm(request.form)
         if form.validate():
-            # todo： 这一部分应该可以放在model中实现
             email = form.email.data
             password = form.password.data
             remember = form.remember.data
