@@ -31,7 +31,7 @@
 
 </head>
 <body class="sidebar-fixed header-fixed">
-{% set u=g.cms_user %}
+{% set u = g.cms_user %}
 <div class="page-wrapper">
     <nav class="navbar page-header">
         <a href="#" class="btn btn-link sidebar-mobile-toggle d-md-none mr-auto">
@@ -53,7 +53,11 @@
                     <img src="{{ static('cms/imgs/avatar-1.png') }}" class="avatar avatar-sm"
                          alt="logo">
                     <span class="large ml-1 d-md-down-none">
+                        {% if u %}
                         {{ u.username }}
+                        {% else %}
+                        访问者
+                        {% endif %}
                     </span>
                 </a>
 

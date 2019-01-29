@@ -9,47 +9,42 @@
 
 {% block body %}
 <div class="lg-container">
-    <div id="myCarousel" class="carousel slide index-banner">
-        <!-- 轮播（Carousel）指标 -->
+    <div id="carousel-example-generic" class="carousel slide index-banner" data-ride="carousel">
+        <!-- 指示器 -->
         <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-            <li data-target="#myCarousel" data-slide-to="3"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="3"></li>
         </ol>
-        <!-- 轮播（Carousel）项目 -->
-        <div class="carousel-inner">
+
+        <!-- 轮播图 -->
+        <div class="carousel-inner" role="listbox">
+            {% for banner in banners %}
+            {% if loop.first %}
             <div class="item active">
-                <a href="">
-                    <img src="https://img.alicdn.com/tfs/TB1vtedDkPoK1RjSZKbXXX1IXXa-520-280.png_q90_.webp" alt="First slide">
-                </a>
-            </div>
-            <div class="item">
-                <a href="">
-                    <img src="https://aecpm.alicdn.com/simba/img/TB1XotJXQfb_uJkSnhJSuvdDVXa.jpg" alt="Second slide">
-                </a>
-            </div>
-            <div class="item">
-            <a href="">
-                    <img src="https://aecpm.alicdn.com/simba/img/TB1JNHwKFXXXXafXVXXSutbFXXX.jpg" alt="Third slide">
-                </a>
-            </div>
-            <div class="item">
-                 <a href="">
-                    <img src="https://img.alicdn.com/tfs/TB1KuaFDIfpK1RjSZFOXXa6nFXa-520-280.jpg_q90_.webp" alt="Fourth slide">
-                </a>
+                {% else %}
+                <div class="item">
+                    {% endif %}
+                    <a href="{{ banner.link_url }}" target="_blank">
+                        <img src="{{ banner.image_url }}" alt="">
+                    </a>
+                </div>
+                {% endfor %}
             </div>
         </div>
-        <!-- 轮播（Carousel）导航 -->
-        <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+
+        <!-- 左右切换的控制按钮 -->
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
             <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
         </a>
-        <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
             <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
         </a>
     </div>
+</div>
 </div>
 <div class="sm-container">
 

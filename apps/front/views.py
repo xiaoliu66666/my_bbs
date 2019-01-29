@@ -10,6 +10,7 @@ from flask import (
 
 from exts import db
 from .models import FrontUser
+from ..models import BannerModel
 from .forms import RegisterForm, LoginForm
 from utils import xjson, log, safe_url
 from config import FRONT_USER_ID
@@ -20,7 +21,8 @@ main = Blueprint("front", __name__)
 @main.route("/")
 def index():
     # log("request：", request)
-    return render_template('front/front_index.html')
+    banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
+    return render_template('front/front_index.html', banners=banners)
 
 
 class RegisterView(views.MethodView):

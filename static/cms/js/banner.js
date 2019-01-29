@@ -112,5 +112,19 @@ $(function () {
 });
 
 
-
-
+//上传图片，通过FileReader的readAsDataURL方法得到的是data-url
+//但是数据太长无法存入数据库
+//$(function () {
+//    var inputBox = document.getElementById("upload-btn");
+//    inputBox.addEventListener("change",function(){
+//        var reader = new FileReader();
+//        reader.readAsDataURL(inputBox.files[0]);//发起异步请求
+//        reader.onload = function(){
+//        //读取完成后，数据保存在对象的result属性中
+//        var imageInput = $("input[name='image_url']");
+//        imageInput.val(this.result);
+//        console.log(this.result)
+//
+//        }
+//    });
+//});
