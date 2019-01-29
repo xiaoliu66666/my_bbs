@@ -45,3 +45,14 @@ class ResetEmailForm(BaseForm):
         # log("user.email：", user.email, "表单中的email：", email)
         if user is not None:
             raise ValidationError("邮箱重复")
+
+
+class AddBannerForm(BaseForm):
+    name = StringField(validators=[InputRequired(message='请输入轮播图名称！')])
+    image_url = StringField(validators=[InputRequired(message='请输入轮播图图片链接！')])
+    link_url = StringField(validators=[InputRequired(message='请输入轮播图跳转链接！')])
+    priority = IntegerField(validators=[InputRequired(message='请输入轮播图优先级！')])
+
+
+class UpdateBannerForm(AddBannerForm):
+    banner_id = IntegerField(validators=[InputRequired(message='请输入轮播图的id！')])

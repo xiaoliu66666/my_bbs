@@ -15,6 +15,7 @@
     <link rel="stylesheet"
           href="{{ static('cms/vendor/font-awesome/css/fontawesome-all.min.css') }}">
     <link rel="stylesheet" href="{{ static('cms/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ static('cms/css/base.css') }}">
     <link rel="stylesheet" href="{{ static('common/sweetalert/sweetalert.css')}}">
 
     <script src="{{ static('cms/vendor/jquery/jquery.min.js') }}"></script>
@@ -26,7 +27,6 @@
     <script src="{{ static('common/js/bbsajax.js') }}"></script>
     <script src="{{ static('common/sweetalert/sweetalert.min.js')}}"></script>
     <script src="{{ static('common/sweetalert/bbsalert.js')}}"></script>
-
     {% block head %}{% endblock %}
 
 </head>
@@ -154,6 +154,12 @@
                         </a>
                     </li>
                     {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{{ url_for('.banners') }}" class="nav-link">
+                            <i class="icon icon-graph"></i> 轮播图管理
+                        </a>
+                    </li>
 
                 </ul>
             </nav>

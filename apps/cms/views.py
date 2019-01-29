@@ -17,8 +17,11 @@ from .forms import (
     LoginForm,
     ResetPwdForm,
     ResetEmailForm,
+    AddBannerForm,
+    UpdateBannerForm,
 )
 from .models import CMSUser, CMSPersmission
+from ..models import BannerModel
 from .decorators import login_required, permission_required
 from config import CMS_USER_ID
 from exts import db, mail
@@ -105,6 +108,67 @@ def users():
 @permission_required(CMSPersmission.ALL_PERMISSION)
 def roles():
     return render_template("cms/cms_roles.html")
+
+
+@main.route("/banners/")
+@login_required
+def banners():
+    banners = BannerModel.query.all()
+    return render_template("cms/cms_banners.html", banners=banners)
+
+
+@main.route("/abanner/", methods=["POST"])
+@login_required
+def abanner():
+    form = AddBannerForm(request.form)
+    if form.validate():
+        name = form.name.data
+        image_url = form.image_url.data
+        link_url = form.link_url.data
+        priority = form.priority.data
+        banner = BannerModel(name=name, image_url=image_url, link_url=link_url, priority=priority)
+        db.session.add(banner)
+        db.session.commit()
+        return xjson.success()
+    else:
+        return xjson.params_error(message=form.get_error())
+
+
+@main.route("/ubanner/", methods=["POST"])
+@login_required
+def ubanner():
+    form = UpdateBannerForm(request.form)
+    if form.validate():
+        banner_id = form.banner_id.data
+        name = form.name.data
+        image_url = form.image_url.data
+        link_url = form.link_url.data
+        priority = form.priority.data
+        banner = BannerModel.query.get(banner_id)
+        if banner is not None:
+            banner.name = name
+            banner.image_url = image_url
+            banner.link_url = link_url
+            banner.priority = priority
+            db.session.commit()
+            return xjson.success()
+        else:
+            return xjson.params_error(message="没有这个轮播图!")
+    else:
+        return xjson.params_error(message=form.get_error())
+
+
+@main.route("/dbanner/", methods=["POST"])
+@login_required
+def dbanner():
+    banner_id = request.form.get('banner_id')
+    banner = BannerModel.query.get(banner_id)
+    if banner is not None:
+        db.session.delete(banner)
+        db.session.commit()
+        return xjson.success()
+    else:
+        return xjson.params_error("没有这个轮播图")
 
 
 @main.route("/logout/")
