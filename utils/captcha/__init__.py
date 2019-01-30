@@ -4,7 +4,6 @@ import string
 # ImageDraw:一个画笔
 # ImageFont:画笔的字体
 
-# pip install pillow
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -15,10 +14,10 @@ class Captcha(object):
     SIZE = (100, 30)
     # 验证码字体大小
     FONTSIZE = 25
-    # 加入干扰线条数
+    # 干扰线条数
     LINE_NUMBER = 2
 
-    # 构建一个验证码源文本
+    # 用于生成验证码
     SOURCE = list(string.ascii_letters)
     for index in range(0, 10):
         SOURCE.append(str(index))

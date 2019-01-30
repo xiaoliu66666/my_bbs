@@ -12,16 +12,18 @@ from flask import (
     g,
 )
 
-from utils import log, xjson, cache
+from utils import xjson, cache
 from .forms import (
     LoginForm,
     ResetPwdForm,
     ResetEmailForm,
     AddBannerForm,
     UpdateBannerForm,
+    AddBoardForm,
+    UpdateBoardForm,
 )
 from .models import CMSUser, CMSPersmission
-from ..models import BannerModel
+from apps.common.models import BannerModel, BoardModel
 from .decorators import login_required, permission_required
 from config import CMS_USER_ID
 from exts import db, mail
@@ -86,7 +88,58 @@ def comments():
 @login_required
 @permission_required(CMSPersmission.BOARDER)
 def boards():
-    return render_template("cms/cms_boards.html")
+    boards = BoardModel.query.all()
+    return render_template("cms/cms_boards.html", boards=boards)
+
+
+@main.route("/aboard/", methods=["POST"])
+@login_required
+@permission_required(CMSPersmission.BOARDER)
+def aboard():
+    form = AddBoardForm(request.form)
+    if form.validate():
+        name = form.name.data
+        board = BoardModel(name=name)
+        db.session.add(board)
+        db.session.commit()
+        return xjson.success()
+    else:
+        return xjson.params_error(form.get_error())
+
+
+@main.route('/uboard/', methods=['POST'])
+@login_required
+@permission_required(CMSPersmission.BOARDER)
+def uboard():
+    form = UpdateBoardForm(request.form)
+    if form.validate():
+        board_id = form.board_id.data
+        name = form.name.data
+        if board_id:
+            board = BoardModel.query.get(board_id)
+            board.name = name
+            db.session.commit()
+            return xjson.success(message='更新成功')
+        else:
+            return xjson.params_error(message='板块不存在')
+    else:
+        return xjson.params_error(message=form.get_error())
+
+
+@main.route('/dboard/', methods=['POST'])
+@login_required
+@permission_required(CMSPersmission.BOARDER)
+def dboard():
+    board_id = request.form.get('board_id')
+    if not board_id:
+        return xjson.params_error(message='请传入板块id')
+    board = BoardModel.query.get(board_id)
+    if not board:
+        return xjson.params_error(message='没有这个板块')
+
+    db.session.delete(board)
+    db.session.commit()
+    return xjson.success(message='删除板块成功')
 
 
 @main.route("/fusers/")

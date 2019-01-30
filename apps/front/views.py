@@ -1,6 +1,5 @@
 from flask import (
     Blueprint,
-    redirect,
     url_for,
     request,
     render_template,
@@ -10,9 +9,9 @@ from flask import (
 
 from exts import db
 from .models import FrontUser
-from ..models import BannerModel
+from apps.common.models import BannerModel, BoardModel
 from .forms import RegisterForm, LoginForm
-from utils import xjson, log, safe_url
+from utils import xjson, safe_url
 from config import FRONT_USER_ID
 
 main = Blueprint("front", __name__)
@@ -22,7 +21,12 @@ main = Blueprint("front", __name__)
 def index():
     # log("request：", request)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
-    return render_template('front/front_index.html', banners=banners)
+    boards = BoardModel.query.all()
+    params = {
+        "banners": banners,
+        "boards": boards,
+    }
+    return render_template('front/front_index.html', **params)
 
 
 class RegisterView(views.MethodView):
