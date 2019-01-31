@@ -14,10 +14,12 @@ def create_app():
     from apps.cms import main as cms
     from apps.front import main as front
     from apps.common import main as common
+    from apps.ueditor import main as ueditor
 
     app.register_blueprint(cms)
     app.register_blueprint(common)
     app.register_blueprint(front)
+    app.register_blueprint(ueditor)
 
     db.init_app(app)
     mail.init_app(app)

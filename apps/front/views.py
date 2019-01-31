@@ -5,14 +5,16 @@ from flask import (
     render_template,
     views,
     session,
+    g,
 )
 
 from exts import db
 from .models import FrontUser
-from apps.common.models import BannerModel, BoardModel
-from .forms import RegisterForm, LoginForm
+from apps.common.models import BannerModel, BoardModel, PostModel
+from .forms import RegisterForm, LoginForm, AddPostForm
 from utils import xjson, safe_url
 from config import FRONT_USER_ID
+from .decorators import login_required
 
 main = Blueprint("front", __name__)
 
@@ -27,6 +29,30 @@ def index():
         "boards": boards,
     }
     return render_template('front/front_index.html', **params)
+
+
+@main.route("/apost/", methods=["GET", "POST"])
+def apost():
+    if request.method == "GET":
+        boards = BoardModel.query.all()
+        return render_template("front/front_apost.html", boards=boards)
+    else:
+        add_post_form = AddPostForm(request.form)
+        if add_post_form.validate():
+            title = add_post_form.title.data
+            content = add_post_form.content.data
+            board_id = add_post_form.board_id.data
+            board = BoardModel.query.get(board_id)
+            if not board:
+                return xjson.params_error(message='没有这个板块')
+            post = PostModel(title=title, content=content)
+            post.board = board
+            post.author = g.front_user
+            db.session.add(post)
+            db.session.commit()
+            return xjson.success()
+        else:
+            return xjson.params_error(message=add_post_form.get_error())
 
 
 class RegisterView(views.MethodView):

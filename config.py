@@ -1,4 +1,6 @@
 # session所需的密钥
+import os
+
 SECRET_KEY = "dca55fc1-c08d-490c-8177-0777ed4e700e"
 DEBUG = True
 
@@ -28,4 +30,6 @@ MAIL_USERNAME = "767550269@qq.com"
 MAIL_PASSWORD = "lgqkqhxiztibbdag"
 MAIL_DEFAULT_SENDER = "767550269@qq.com"
 
+# ueditor上传配置
+UEDITOR_UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'post_files')
 

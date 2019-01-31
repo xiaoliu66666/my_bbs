@@ -45,3 +45,9 @@ class LoginForm(BaseForm):
         user = FrontUser.query.filter_by(telephone=field.data).first()
         if user is None:
             raise ValidationError('该手机号未注册')
+
+
+class AddPostForm(BaseForm):
+    title = StringField(validators=[InputRequired(message='请输入标题！')])
+    content = StringField(validators=[InputRequired(message='请输入内容！')])
+    board_id = IntegerField(validators=[InputRequired(message='请输入板块id！')])
