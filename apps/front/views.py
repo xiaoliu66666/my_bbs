@@ -7,11 +7,19 @@ from flask import (
     session,
     g,
     abort,
+    redirect,
 )
+from sqlalchemy import func
 
 from exts import db
 from .models import FrontUser
-from apps.common.models import BannerModel, BoardModel, PostModel, CommentModel
+from apps.common.models import (
+    BannerModel,
+    BoardModel,
+    PostModel,
+    CommentModel,
+    HighlightPostModel,
+)
 from .forms import RegisterForm, LoginForm, AddPostForm, AddCommentForm
 from utils import xjson, safe_url
 from config import FRONT_USER_ID, PER_PAGE
@@ -27,19 +35,36 @@ def index():
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
 
-    # 根据当前页面来进行分页
+    # 根据当前页码来进行分页
     current_page = request.args.get(get_page_parameter(), type=int, default=1)
     start = (current_page - 1) * PER_PAGE
     end = start + PER_PAGE
 
+    # 帖子排序
+    sort = request.args.get("st", type=int, default=1)
+    if sort == 1:
+        query = PostModel.query.order_by(PostModel.create_time.desc())
+    elif sort == 2:
+        # 按照加精的时间倒序
+        query = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
+            HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
+    elif sort == 3:
+        # 按照点赞的数量排序,点赞功能没有做，所以这里用时间倒序
+        query = PostModel.query.order_by(PostModel.create_time.desc())
+    elif sort == 4:
+        # 按照评论的数量排序
+        query = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
+            func.count(CommentModel.id).desc(), PostModel.create_time.desc())
+
+    # 根据板块显示帖子
     board_id = request.args.get("bid", type=int, default=None)
     if board_id is not None:
         query = PostModel.query.filter_by(board_id=board_id)
         posts = query.slice(start, end)
         total = query.count()
     else:
-        posts = PostModel.query.slice(start, end)
-        total = PostModel.query.count()
+        posts = query.slice(start, end)
+        total = query.count()
     paginate = Pagination(bs_version=3, outer_window=0,
                           total=total,
                           page=current_page)
@@ -49,6 +74,7 @@ def index():
         "posts": posts,
         "paginate": paginate,
         "current_board": board_id,
+        "current_sort": sort,
     }
     return render_template('front/front_index.html', **params)
 
@@ -93,6 +119,8 @@ def detail(pid):
 @login_required
 def apost():
     if request.method == "GET":
+        if "front_user" not in g.__dict__:
+            return redirect(url_for('.login'))
         boards = BoardModel.query.all()
         return render_template("front/front_apost.html", boards=boards)
     else:

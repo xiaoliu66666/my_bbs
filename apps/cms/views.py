@@ -74,7 +74,7 @@ def profile():
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def posts():
-    posts = PostModel.query.all()
+    posts = PostModel.query.order_by(PostModel.create_time.desc())
     return render_template("cms/cms_posts.html", posts=posts)
 
 
@@ -126,7 +126,7 @@ def dpost():
 
     db.session.delete(post)
     db.session.commit()
-    return xjson.success("删除帖子成功！")
+    return xjson.success(message="删除帖子成功！")
 
 
 @main.route("/comments/")

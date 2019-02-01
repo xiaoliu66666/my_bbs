@@ -17,7 +17,7 @@ $(function () {
             },
             'success': function (data) {
                 if(data['code'] == 200){
-                    bbsalert.alertSuccessToast('操作成功！');
+                    bbsalert.alertSuccessToast('');
                     setTimeout(function () {
                         window.location.reload();
                     },500);
@@ -48,7 +48,6 @@ $(function () {
                         window.location.reload();
                     },500);
                 }else{
-                    console.log(data['message'])
                     bbsalert.alertInfo(data['message']);
                 }
             }

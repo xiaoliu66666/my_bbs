@@ -40,10 +40,23 @@
         </div>
 <div class="post-group">
     <ul class="post-group-head">
-            <li class="active"><a href="{{ url_for('front.index',st=1,bd=current_board) }}">最新</a></li>
-            <li><a href="{{ url_for('front.index',st=2,bd=current_board) }}">精华帖子</a></li>
-            <li><a href="{{ url_for('front.index',st=3,bd=current_board) }}">点赞最多</a></li>
-            <li><a href="{{ url_for('front.index',st=4,bd=current_board) }}">评论最多</a></li>
+            <li class="{% if current_sort == 1 %}active{% endif %}">
+                <a href="{{ url_for('front.index',st=1,bd=current_board) }}">最新
+                </a>
+            </li>
+            <li class="{% if current_sort == 2 %}active{% endif %}">
+                <a href="{{ url_for('front.index',st=2,bd=current_board) }}">精华帖子
+                </a>
+            </li>
+            <li class="{% if current_sort == 3 %}active{% endif %}">
+                <a href="{{ url_for('front.index',st=3,bd=current_board) }}">
+                    点赞最多
+                </a>
+            </li>
+            <li class="{% if current_sort == 4 %}active{% endif %}">
+                <a href="{{ url_for('front.index',st=4,bd=current_board) }}">评论最多
+                </a>
+            </li>
     </ul>
     <ul class="post-list-group">
         {% for post in posts %}
@@ -62,7 +75,7 @@
                     <p class="post-info">
                         <span>作者:{{ post.author.username }}</span>
                         <span>发布时间:{{ post.create_time }}</span>
-                        <span>评论:0</span>
+                        <span>评论:{{ post.comments | length }}</span>
                         <span>阅读:0</span>
                     </p>
                 </div>
