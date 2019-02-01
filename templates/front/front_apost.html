@@ -22,7 +22,7 @@
     <div class="form-group">
         <div class="input-group">
             <span class="input-group-addon">板块</span>
-            <select name="board" class="form-control">
+            <select name="board_id" class="form-control">
                 {% for board in boards %}
                 <option value="{{ board.id }}">{{ board.name }}</option>
                 {% endfor %}

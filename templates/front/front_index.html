@@ -36,7 +36,37 @@
                 {% endfor %}
             </div>
         </div>
+<div class="post-group">
+    <ul class="post-group-head">
+            <li class="active"><a href="{{ url_for('front.index',st=1,bd=current_board) }}">最新</a></li>
+            <li><a href="{{ url_for('front.index',st=2,bd=current_board) }}">精华帖子</a></li>
+            <li><a href="{{ url_for('front.index',st=3,bd=current_board) }}">点赞最多</a></li>
+            <li><a href="{{ url_for('front.index',st=4,bd=current_board) }}">评论最多</a></li>
+    </ul>
+    <ul class="post-list-group">
+        {% for post in posts %}
+            <li>
+                <div class="author-avatar-group">
+                    <img src="{{ post.author.avatar or url_for('static',filename='common/images/logo.jpg') }}" alt="">
+                </div>
+                <div class="post-info-group">
+                    <p class="post-title">
+                        <a href="#">{{ post.title }}</a>
 
+                            <span class="label label-danger">精华帖</span>
+
+                    </p>
+                    <p class="post-info">
+                        <span>作者:{{ post.author.username }}</span>
+                        <span>发布时间:{{ post.create_time }}</span>
+                        <span>评论:0</span>
+                        <span>阅读:0</span>
+                    </p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
         <!-- 左右切换的控制按钮 -->
 
         <!--<a class="left carousel-control previous" href="#carousel-example-generic" role="button" data-slide="prev">-->
@@ -50,6 +80,7 @@
         <!--<span class="sr-only">Next</span>-->
         <!--</a>-->
     </div>
+
     <div class="sm-container">
         <div style="padding-bottom: 10px">
             <a href="{{ url_for('.apost') }}">

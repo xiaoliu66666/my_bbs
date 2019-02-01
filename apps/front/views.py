@@ -24,9 +24,11 @@ def index():
     # log("request：", request)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
+    posts = PostModel.query.all()
     params = {
         "banners": banners,
         "boards": boards,
+        "posts": posts,
     }
     return render_template('front/front_index.html', **params)
 
