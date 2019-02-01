@@ -5,7 +5,9 @@
 {% block head %}
 <link rel="stylesheet" href="{{ static('front/css/front_index.css') }}">
 <style>
-
+    .paginate{
+        text-align: center;
+    }
 </style>
 {% endblock %}
 
@@ -51,7 +53,7 @@
                 </div>
                 <div class="post-info-group">
                     <p class="post-title">
-                        <a href="#">{{ post.title }}</a>
+                        <a href="{{ url_for('.detail', pid=post.id) }}">{{ post.title }}</a>
 
                             <span class="label label-danger">精华帖</span>
 
@@ -66,8 +68,12 @@
             </li>
         {% endfor %}
     </ul>
+    <div class="paginate">
+        {{ paginate.links }}
+    </div>
+
 </div>
-        <!-- 左右切换的控制按钮 -->
+         <!--左右切换的控制按钮-->
 
         <!--<a class="left carousel-control previous" href="#carousel-example-generic" role="button" data-slide="prev">-->
         <!--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>-->
@@ -89,9 +95,16 @@
         </div>
 
         <div class="list-group">
-            <a href="#" class="list-group-item active">所有板块</a>
+            <a href="/" class="list-group-item
+            {% if not current_board %}
+            active
+            {% endif %}">所有板块</a>
             {% for board in boards %}
-            <a href="#" class="list-group-item ">{{ board.name }}</a>
+            <a href="{{ url_for('.index', bid=board.id)  }}"
+               class="list-group-item
+               {% if board.id == current_board %}
+            active
+            {% endif %}">{{ board.name }}</a>
             {% endfor %}
         </div>
     </div>

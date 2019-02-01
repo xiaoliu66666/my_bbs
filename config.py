@@ -33,3 +33,5 @@ MAIL_DEFAULT_SENDER = "767550269@qq.com"
 # ueditor上传配置
 UEDITOR_UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'post_files')
 
+# 分页配置
+PER_PAGE = 10

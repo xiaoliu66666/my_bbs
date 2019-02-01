@@ -4,6 +4,7 @@ from exts import db
 from bbs import create_app
 from apps.cms import models as cms_models
 from apps.front import models as front_models
+from apps.common.models import PostModel, BoardModel
 
 CMSUser = cms_models.CMSUser
 CMSRole = cms_models.CMSRole
@@ -36,6 +37,20 @@ def create_front_user(telephone, username, password):
     db.session.add(user)
     db.session.commit()
     print("添加成功")
+
+@manager.command
+def create_post():
+    for x in range(101):
+        title = "标题：{}".format(x)
+        content = "内容：{}".format(x)
+        author = FrontUser.query.first()
+        board =  BoardModel.query.first()
+        post = PostModel(title=title, content=content)
+        post.board = board
+        post.author = author
+        db.session.add(post)
+        db.session.commit()
+    print("added test!")
 
 @manager.command
 def create_role():

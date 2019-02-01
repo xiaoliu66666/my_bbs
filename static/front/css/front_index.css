@@ -6,7 +6,7 @@
 
 /*需要把图片的高度和轮播的一致*/
 .index-banner img{
-    height: 200px;
+    height: 100%;
 }
 .post-group{
     border: 1px solid #ddd;

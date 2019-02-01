@@ -6,15 +6,17 @@ from flask import (
     views,
     session,
     g,
+    abort,
 )
 
 from exts import db
 from .models import FrontUser
-from apps.common.models import BannerModel, BoardModel, PostModel
-from .forms import RegisterForm, LoginForm, AddPostForm
+from apps.common.models import BannerModel, BoardModel, PostModel, CommentModel
+from .forms import RegisterForm, LoginForm, AddPostForm, AddCommentForm
 from utils import xjson, safe_url
-from config import FRONT_USER_ID
+from config import FRONT_USER_ID, PER_PAGE
 from .decorators import login_required
+from flask_paginate import get_page_parameter, Pagination
 
 main = Blueprint("front", __name__)
 
@@ -24,16 +26,71 @@ def index():
     # log("request：", request)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
-    posts = PostModel.query.all()
+
+    # 根据当前页面来进行分页
+    current_page = request.args.get(get_page_parameter(), type=int, default=1)
+    start = (current_page - 1) * PER_PAGE
+    end = start + PER_PAGE
+
+    board_id = request.args.get("bid", type=int, default=None)
+    if board_id is not None:
+        query = PostModel.query.filter_by(board_id=board_id)
+        posts = query.slice(start, end)
+        total = query.count()
+    else:
+        posts = PostModel.query.slice(start, end)
+        total = PostModel.query.count()
+    paginate = Pagination(bs_version=3, outer_window=0,
+                          total=total,
+                          page=current_page)
     params = {
         "banners": banners,
         "boards": boards,
         "posts": posts,
+        "paginate": paginate,
+        "current_board": board_id,
     }
     return render_template('front/front_index.html', **params)
 
 
+@main.route('/acomment/', methods=['POST'])
+@login_required
+def acomment():
+    form = AddCommentForm(request.form)
+    if form.validate():
+        content = form.content.data
+        post_id = form.post_id.data
+        post = PostModel.query.get(post_id)
+        if post is not None:
+            comment = CommentModel(content=content)
+            comment.post = post
+            comment.author = g.front_user
+            db.session.add(comment)
+            db.session.commit()
+            return xjson.success()
+        else:
+            return xjson.params_error('没有这篇帖子！')
+    else:
+        return xjson.params_error(form.get_error())
+
+
+@main.route("/p/<pid>")
+def detail(pid):
+    post = PostModel.query.get(pid)
+    comments = CommentModel.query.filter_by(post_id=pid)
+    counts = comments.count()
+    if post is None:
+        abort(404)
+    params = {
+        "post": post,
+        "comments": comments,
+        "counts": counts,
+    }
+    return render_template("front/front_detail.html", **params)
+
+
 @main.route("/apost/", methods=["GET", "POST"])
+@login_required
 def apost():
     if request.method == "GET":
         boards = BoardModel.query.all()
@@ -49,6 +106,7 @@ def apost():
                 return xjson.params_error(message='没有这个板块')
             post = PostModel(title=title, content=content)
             post.board = board
+            # 作者等于当前登录的用户
             post.author = g.front_user
             db.session.add(post)
             db.session.commit()
@@ -85,6 +143,7 @@ class RegisterView(views.MethodView):
 class LoginView(views.MethodView):
     def get(self):
         return_to = request.referrer
+        # return_to 不能为当前页面，也不能为注册页面，并且要确保是安全的url
         if (return_to is not None
                 and return_to != request.url
                 and return_to != url_for('front.register')
