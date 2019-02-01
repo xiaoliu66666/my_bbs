@@ -23,7 +23,7 @@ from .forms import (
     UpdateBoardForm,
 )
 from .models import CMSUser, CMSPersmission
-from apps.common.models import BannerModel, BoardModel
+from apps.common.models import BannerModel, BoardModel, PostModel, HighlightPostModel
 from .decorators import login_required, permission_required
 from config import CMS_USER_ID
 from exts import db, mail
@@ -74,7 +74,59 @@ def profile():
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def posts():
-    return render_template("cms/cms_posts.html")
+    posts = PostModel.query.all()
+    return render_template("cms/cms_posts.html", posts=posts)
+
+
+@main.route('/hpost/', methods=['POST'])
+@login_required
+@permission_required(CMSPersmission.POSTER)
+def hpost():
+    post_id = request.form.get("post_id")
+    if not post_id:
+        return xjson.params_error('请传入帖子id！')
+    post = PostModel.query.get(post_id)
+    if not post:
+        return xjson.params_error("没有这篇帖子！")
+
+    highlight = HighlightPostModel()
+    highlight.post = post
+    db.session.add(highlight)
+    db.session.commit()
+    return xjson.success()
+
+
+@main.route('/uhpost/', methods=['POST'])
+@login_required
+@permission_required(CMSPersmission.POSTER)
+def uhpost():
+    post_id = request.form.get("post_id")
+    if not post_id:
+        return xjson.params_error('请传入帖子id！')
+    post = PostModel.query.get(post_id)
+    if not post:
+        return xjson.params_error("没有这篇帖子！")
+
+    highlight = HighlightPostModel.query.filter_by(post_id=post_id).first()
+    db.session.delete(highlight)
+    db.session.commit()
+    return xjson.success()
+
+
+@main.route('/dpost/', methods=['POST'])
+@login_required
+@permission_required(CMSPersmission.POSTER)
+def dpost():
+    post_id = request.form.get("post_id")
+    if not post_id:
+        return xjson.params_error('请传入帖子id！')
+    post = PostModel.query.get(post_id)
+    if not post:
+        return xjson.params_error("没有这篇帖子！")
+
+    db.session.delete(post)
+    db.session.commit()
+    return xjson.success("删除帖子成功！")
 
 
 @main.route("/comments/")

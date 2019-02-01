@@ -31,7 +31,9 @@
 
 </head>
 <body class="sidebar-fixed header-fixed">
-{% set u = g.cms_user %}
+{% if g.cms_user %}
+    {% set u = g.cms_user %}
+{% endif %}
 <div class="page-wrapper">
     <nav class="navbar page-header">
         <a href="#" class="btn btn-link sidebar-mobile-toggle d-md-none mr-auto">
@@ -86,6 +88,7 @@
                         </a>
                     </li>
 
+                    {% if g.cms_user %}
                     <li class="nav-item nav-dropdown">
                         <a href="#" class="nav-link nav-dropdown-toggle">
                             <i class="icon icon-target"></i> 个人中心 <i class="fa fa-caret-left"></i>
@@ -111,59 +114,78 @@
                             </li>
                         </ul>
                     </li>
-                    {% if u.has_permission(CMSPersmission.POSTER) %}
+                    {% endif %}
+
+                    {% if g.cms_user %}
+                        {% if u.has_permission(CMSPersmission.POSTER) %}
                     <li class="nav-item">
                         <a href="{{ url_for('.posts') }}" class="nav-link">
                             <i class="icon icon-energy"></i> 帖子管理
                         </a>
                     </li>
+                        {% endif %}
                     {% endif %}
 
-                    {% if u.has_permission(CMSPersmission.COMMENTER) %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('.comments') }}" class="nav-link">
-                            <i class="icon icon-graph"></i> 评论管理
-                        </a>
-                    </li>
+                    {% if g.cms_user %}
+                        {% if u.has_permission(CMSPersmission.COMMENTER) %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('.comments') }}" class="nav-link">
+                                <i class="icon icon-graph"></i> 评论管理
+                            </a>
+                        </li>
+                        {% endif %}
                     {% endif %}
 
-                    {% if u.has_permission(CMSPersmission.BOARDER) %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('.boards') }}" class="nav-link">
-                            <i class="icon icon-puzzle"></i> 板块管理
-                        </a>
-                    </li>
+                    {% if g.cms_user %}
+                        {% if u.has_permission(CMSPersmission.BOARDER) %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('.boards') }}" class="nav-link">
+                                <i class="icon icon-puzzle"></i> 板块管理
+                            </a>
+                        </li>
+                        {% endif %}
                     {% endif %}
 
-                    {% if u.has_permission(CMSPersmission.FRONTUSER) %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('.fusers') }}" class="nav-link">
-                            <i class="icon icon-grid"></i> 前台用户管理
-                        </a>
-                    </li>
+                    {% if g.cms_user %}
+                        {% if u.has_permission(CMSPersmission.FRONTUSER) %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('.fusers') }}" class="nav-link">
+                                <i class="icon icon-grid"></i> 前台用户管理
+                            </a>
+                        </li>
+                        {% endif %}
                     {% endif %}
 
-                    {% if u.has_permission(CMSPersmission.CMSUSER) %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('.users') }}" class="nav-link">
-                            <i class="icon icon-grid"></i> CMS用户管理
-                        </a>
-                    </li>
+                    {% if g.cms_user %}
+                        {% if u.has_permission(CMSPersmission.CMSUSER) %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('.users') }}" class="nav-link">
+                                <i class="icon icon-grid"></i> CMS用户管理
+                            </a>
+                        </li>
+                        {% endif %}
                     {% endif %}
 
-                    {% if u.is_developer %}
-                    <li class="nav-item">
-                        <a href="{{ url_for('.roles') }}" class="nav-link">
-                            <i class="icon icon-grid"></i> CMS用户组管理
-                        </a>
-                    </li>
+                    {% if g.cms_user %}
+                        {% if u.is_developer %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('.roles') }}" class="nav-link">
+                                <i class="icon icon-grid"></i> CMS用户组管理
+                            </a>
+                        </li>
+                        {% endif %}
                     {% endif %}
 
+
+                    {% if g.cms_user %}
+                        {% if u.is_developer %}
                     <li class="nav-item">
                         <a href="{{ url_for('.banners') }}" class="nav-link">
                             <i class="icon icon-graph"></i> 轮播图管理
                         </a>
                     </li>
+                        {% endif %}
+                    {% endif %}
 
                 </ul>
             </nav>
