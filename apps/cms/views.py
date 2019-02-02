@@ -28,6 +28,7 @@ from .decorators import login_required, permission_required
 from config import CMS_USER_ID
 from exts import db, mail
 from flask_mail import Message
+from tasks import send_mail
 
 main = Blueprint("cms", __name__, url_prefix="/cms")
 
@@ -50,16 +51,18 @@ def email_captcha():
     s = list(string.ascii_letters)
     s.extend([str(i) for i in range(0, 10)])
     captcha = "".join(random.sample(s, 6))
-    message = Message(
-        "修改邮箱的验证码",
-        recipients=[email],
-        body="验证码是：{}".format(captcha)
-    )
-    try:
-        mail.send(message)
-    except:
-        return xjson.server_error("服务器错误")
+    # message = Message(
+    #     "修改邮箱的验证码",
+    #     recipients=[email],
+    #     body="验证码是：{}".format(captcha)
+    # )
+    # try:
+    #     mail.send(message)
+    # except:
+    #     return xjson.server_error("服务器错误")
 
+    # celery 异步发送邮件
+    send_mail.delay("修改邮箱的验证码", [email], "验证码是：{}".format(captcha))
     cache.set(email, captcha)
     return xjson.success("发送成功")
 
