@@ -187,6 +187,16 @@
                         {% endif %}
                     {% endif %}
 
+
+                    {% if g.cms_user %}
+                        {% if u.is_developer %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('.cpu') }}" class="nav-link">
+                            <i class="icon icon-graph"></i> cpu占用率
+                        </a>
+                    </li>
+                        {% endif %}
+                    {% endif %}
                 </ul>
             </nav>
         </div>

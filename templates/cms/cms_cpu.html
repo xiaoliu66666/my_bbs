@@ -1,0 +1,31 @@
+{% from 'common/_macros.html' import static %}
+
+
+{% extends "cms/cms_base.html" %}
+
+{% block title %}
+cpu占用率
+{% endblock %}
+
+{% block head %}
+<script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+<!-- ECharts 3 引入 -->
+<script src="http://echarts.baidu.com/dist/echarts.min.js"></script>
+<style>
+    #main {
+        height:500px;
+        border:1px solid #ccc;
+        padding:10px;
+    }
+</style>
+{% endblock %}
+
+{% block page_title %}
+  {{ self.title() }}
+{% endblock %}
+
+{% block main_content %}
+<div id="main"></div>
+<script src="{{ static('cms/js/cpu.js') }}"></script>
+
+{% endblock %}

@@ -1,5 +1,7 @@
+import psutil
 import string
 import random
+import time
 
 from flask import (
     Blueprint,
@@ -26,11 +28,30 @@ from .models import CMSUser, CMSPersmission
 from apps.common.models import BannerModel, BoardModel, PostModel, HighlightPostModel
 from .decorators import login_required, permission_required
 from config import CMS_USER_ID
-from exts import db, mail
+from exts import db, mail, socketio
 from flask_mail import Message
 from tasks import send_mail
+from threading import Lock
 
 main = Blueprint("cms", __name__, url_prefix="/cms")
+
+thread = None
+thread_lock = Lock()
+
+
+def background_thread():
+    # 后台线程 产生数据，即刻推送至前端
+    count = 0
+    while True:
+        socketio.sleep(5)
+        count += 1
+        t = time.strftime('%H:%M:%S', time.localtime())
+        # 获取系统时间（只取时:分:秒）
+        cpus = psutil.cpu_percent(interval=None, percpu=True)
+        # 获取系统cpu使用率 non-blocking
+        socketio.emit('server_response',
+                      {'data': [t, cpus], 'count': count},
+                      namespace='/test')
 
 
 @main.route("/")
@@ -70,6 +91,7 @@ def email_captcha():
 @main.route("/profile/")
 @login_required
 def profile():
+    # 个人信息
     return render_template("cms/cms_profile.html")
 
 
@@ -77,14 +99,15 @@ def profile():
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def posts():
-    posts = PostModel.query.order_by(PostModel.create_time.desc())
-    return render_template("cms/cms_posts.html", posts=posts)
+    posts1 = PostModel.query.order_by(PostModel.create_time.desc())
+    return render_template("cms/cms_posts.html", posts=posts1)
 
 
 @main.route('/hpost/', methods=['POST'])
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def hpost():
+    # 加精帖子
     post_id = request.form.get("post_id")
     if not post_id:
         return xjson.params_error('请传入帖子id！')
@@ -103,6 +126,7 @@ def hpost():
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def uhpost():
+    # 取消加精
     post_id = request.form.get("post_id")
     if not post_id:
         return xjson.params_error('请传入帖子id！')
@@ -120,6 +144,7 @@ def uhpost():
 @login_required
 @permission_required(CMSPersmission.POSTER)
 def dpost():
+    # 删除帖子
     post_id = request.form.get("post_id")
     if not post_id:
         return xjson.params_error('请传入帖子id！')
@@ -143,14 +168,15 @@ def comments():
 @login_required
 @permission_required(CMSPersmission.BOARDER)
 def boards():
-    boards = BoardModel.query.all()
-    return render_template("cms/cms_boards.html", boards=boards)
+    boards1 = BoardModel.query.all()
+    return render_template("cms/cms_boards.html", boards=boards1)
 
 
 @main.route("/aboard/", methods=["POST"])
 @login_required
 @permission_required(CMSPersmission.BOARDER)
 def aboard():
+    # 添加板块
     form = AddBoardForm(request.form)
     if form.validate():
         name = form.name.data
@@ -166,6 +192,7 @@ def aboard():
 @login_required
 @permission_required(CMSPersmission.BOARDER)
 def uboard():
+    # 更新板块
     form = UpdateBoardForm(request.form)
     if form.validate():
         board_id = form.board_id.data
@@ -201,6 +228,7 @@ def dboard():
 @login_required
 @permission_required(CMSPersmission.FRONTUSER)
 def fusers():
+    # 管理前台用户
     return render_template("cms/cms_fusers.html")
 
 
@@ -208,6 +236,7 @@ def fusers():
 @login_required
 @permission_required(CMSPersmission.CMSUSER)
 def users():
+    # 管理后台用户
     return render_template("cms/cms_users.html")
 
 
@@ -215,12 +244,14 @@ def users():
 @login_required
 @permission_required(CMSPersmission.ALL_PERMISSION)
 def roles():
+    # 管理权限
     return render_template("cms/cms_roles.html")
 
 
 @main.route("/banners/")
 @login_required
 def banners():
+    # 轮播图管理
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).all()
     return render_template("cms/cms_banners.html", banners=banners)
 
@@ -228,6 +259,7 @@ def banners():
 @main.route("/abanner/", methods=["POST"])
 @login_required
 def abanner():
+    # 添加轮播图
     form = AddBannerForm(request.form)
     if form.validate():
         name = form.name.data
@@ -245,6 +277,7 @@ def abanner():
 @main.route("/ubanner/", methods=["POST"])
 @login_required
 def ubanner():
+    # 更新轮播图
     form = UpdateBannerForm(request.form)
     if form.validate():
         banner_id = form.banner_id.data
@@ -286,6 +319,19 @@ def logout():
     return redirect(url_for('.login'))
 
 
+@main.route('/cpu/')
+def cpu():
+    return render_template('cms/cms_cpu.html', async_mode=socketio.async_mode)
+
+
+@socketio.on('connect', namespace='/test')
+def connect():
+    global thread
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(target=background_thread)
+
+
 class LoginView(views.MethodView):
     def get(self, message=None):
         return render_template("cms/cms_login.html", message=message)
@@ -306,7 +352,6 @@ class LoginView(views.MethodView):
                 return redirect(url_for('.index'))
             else:
                 return self.get(message="邮箱或者密码错误！")
-                # flash("邮箱或者密码错误")
                 # return redirect(url_for('.index'))
         else:
             # log("form.error", form.errors)
