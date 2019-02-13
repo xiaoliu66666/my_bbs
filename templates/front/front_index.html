@@ -4,11 +4,6 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ static('front/css/front_index.css') }}">
-<style>
-    .paginate{
-        text-align: center;
-    }
-</style>
 {% endblock %}
 
 
@@ -50,7 +45,7 @@
             </li>
             <li class="{% if current_sort == 3 %}active{% endif %}">
                 <a href="{{ url_for('front.index',st=3,bd=current_board) }}">
-                    点赞最多
+                    阅读最多
                 </a>
             </li>
             <li class="{% if current_sort == 4 %}active{% endif %}">
@@ -66,17 +61,16 @@
                 </div>
                 <div class="post-info-group">
                     <p class="post-title">
-                        <a href="{{ url_for('.detail', pid=post.id) }}">{{ post.title }}</a>
                         {% if post.highlight %}
-                            <span class="label label-danger">精华帖</span>
+                            <span class="highlight">精华</span>
                         {% endif %}
-
+                        <a href="{{ url_for('.detail', pid=post.id) }}">{{ post.title }}</a>
                     </p>
                     <p class="post-info">
                         <span>作者:{{ post.author.username }}</span>
                         <span>发布时间:{{ post.create_time }}</span>
                         <span>评论:{{ post.comments | length }}</span>
-                        <span>阅读:0</span>
+                        <span>阅读:{{ post.view_count }}</span>
                     </p>
                 </div>
             </li>

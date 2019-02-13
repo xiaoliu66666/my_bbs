@@ -1,3 +1,15 @@
+.navbar{
+    background: #444;
+}
+
+.navbar-default .navbar-brand {
+    color: #61d0cc;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #e7e2e2;
+}
+
 .main-container{
     width: 990px;
     margin: 0 auto;
@@ -19,4 +31,11 @@ a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, bo
     border: 0;
     font: inherit;
     vertical-align: baseline;
+}
+.highlight{
+    background: #80bd01;
+    padding: 2px 4px;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 3px;
 }

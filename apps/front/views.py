@@ -46,11 +46,11 @@ def index():
         query = PostModel.query.order_by(PostModel.create_time.desc())
     elif sort == 2:
         # 按照加精的时间倒序
-        query = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
-            HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
+        query = db.session.query(PostModel).join(HighlightPostModel).order_by(
+            HighlightPostModel.create_time.desc())
     elif sort == 3:
-        # 按照点赞的数量排序,点赞功能没有做，所以这里用时间倒序
-        query = PostModel.query.order_by(PostModel.create_time.desc())
+        # 按照阅读的数量排序,todo:点赞功能没有做
+        query = PostModel.query.order_by(PostModel.view_count.desc())
     elif sort == 4:
         # 按照评论的数量排序
         query = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
@@ -105,6 +105,8 @@ def detail(pid):
     post = PostModel.query.get(pid)
     comments = CommentModel.query.filter_by(post_id=pid)
     counts = comments.count()
+    post.view_count += 1
+    db.session.commit()
     if post is None:
         abort(404)
     params = {
@@ -141,6 +143,13 @@ def apost():
             return xjson.success()
         else:
             return xjson.params_error(message=add_post_form.get_error())
+
+
+@main.route("/logout/")
+@login_required
+def logout():
+    del session[FRONT_USER_ID]
+    return redirect(url_for('.index'))
 
 
 class RegisterView(views.MethodView):

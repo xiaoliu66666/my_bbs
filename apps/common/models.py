@@ -27,6 +27,7 @@ class PostModel(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.now)
     board_id = db.Column(db.Integer, db.ForeignKey('board.id'))
     author_id = db.Column(db.String(100), db.ForeignKey('front_user.id'), nullable=False)
+    view_count = db.Column(db.Integer, server_default='0')
 
     board = db.relationship("BoardModel", backref="posts")
     author = db.relationship("FrontUser", backref='posts')
