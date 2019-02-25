@@ -72,5 +72,20 @@
     margin-right: 10px;
 }
 .paginate{
-        text-align: center;
-    }
+    text-align: center;
+}
+
+.movie-part {
+    padding: 10px;
+    font-size: 14px;
+    line-height: 120%;
+    text-align: left;
+    border-bottom: 1px solid #e2e2e2;
+}
+a.movies{
+    color:#f00/*颜色自定义*/;
+    font-family:"楷体";
+    font-size:20px;
+    text-align: center;
+    margin:70px;
+}

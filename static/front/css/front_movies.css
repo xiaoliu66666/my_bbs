@@ -1,0 +1,15 @@
+.movie-detail{
+    border: 1px solid #ddd;
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 10px;
+    background: white;
+}
+img{
+    width: 400px;
+    height: 500px;
+}
+.refresh{
+    padding-bottom: 10px;
+
+}

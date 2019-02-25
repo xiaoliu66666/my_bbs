@@ -21,10 +21,12 @@ from apps.common.models import (
     HighlightPostModel,
 )
 from .forms import RegisterForm, LoginForm, AddPostForm, AddCommentForm
-from utils import xjson, safe_url
+from utils import xjson, safe_url, spider
 from config import FRONT_USER_ID, PER_PAGE
 from .decorators import login_required
 from flask_paginate import get_page_parameter, Pagination
+from exts import collections
+import threading
 
 main = Blueprint("front", __name__)
 
@@ -150,6 +152,22 @@ def apost():
 def logout():
     del session[FRONT_USER_ID]
     return redirect(url_for('.index'))
+
+
+@main.route("/movies/")
+@login_required
+def movies():
+    _movies = collections.find().limit(10)
+    return render_template('front/front_movies.html', movies=_movies)
+
+
+@main.route("/new/", methods=["GET", "POST"])
+@login_required
+def new():
+    t = threading.Thread(target=spider.spider)
+    t.setDaemon(True)
+    t.start()
+    return redirect(url_for('.movies'))
 
 
 class RegisterView(views.MethodView):

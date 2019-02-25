@@ -1,0 +1,37 @@
+{% extends 'front/front_base.html' %}
+{% from 'common/_macros.html' import static %}
+
+{% block title %}
+最新电影
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ static('front/css/front_movies.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="lg-container">
+    {% for m in movies %}
+    <div class="movie-detail">
+        <h1>{{m['电影名']}}</h1>
+        产地：{{m['产地']}}
+        <br>
+        <img src={{m['封面']}} alt="">
+        <br>
+        主演：{{m['演员']}}
+        <br>
+        简介：<br>
+        {{m['简介']}}
+        <br>
+        下载链接：{{m['下载链接']}}
+    </div>
+    {% endfor %}
+</div>
+<div class="sm-container">
+    <div class="refresh" style="padding-bottom: 10px">
+        <a href="{{ url_for('.new') }}">
+            <button class="btn btn-warning btn-block">更新电影资源</button>
+        </a>
+    </div>
+</div>
+{% endblock %}
