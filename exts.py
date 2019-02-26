@@ -18,3 +18,4 @@ client = pymongo.MongoClient("127.0.0.1", port=27017)
 my_db = client.movies
 # 获取数据库中的集合（对应mysql中的表）
 collections = my_db.new_movies
+

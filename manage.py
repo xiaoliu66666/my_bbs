@@ -38,19 +38,21 @@ def create_front_user(telephone, username, password):
     db.session.commit()
     print("添加成功")
 
+
 @manager.command
 def create_post():
     for x in range(101):
         title = "标题：{}".format(x)
         content = "内容：{}".format(x)
         author = FrontUser.query.first()
-        board =  BoardModel.query.first()
+        board = BoardModel.query.first()
         post = PostModel(title=title, content=content)
         post.board = board
         post.author = author
         db.session.add(post)
         db.session.commit()
     print("added test!")
+
 
 @manager.command
 def create_role():
