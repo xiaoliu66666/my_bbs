@@ -79,6 +79,7 @@ def create_role():
 
     db.session.add_all([visitor, operator, admin, developer])
     db.session.commit()
+    print('添加角色成功')
 
 
 @manager.option('-e', '--email', dest='email')
