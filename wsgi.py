@@ -9,7 +9,13 @@ application = app
 
 """
 建立一个软连接（右边指向左边）
-ln -s /var/www/my_bbs/my_bbs.conf /etc/supervisor/conf.d/my_bbs.conf
+
+supervisor的配置
+ln -s /var/www/my_bbs/bbs.conf /etc/supervisor/conf.d/my_bbs.conf
+
+nginx的配置
+ln -s /var/www/my_bbs/bbs.nginx /etc/nginx/sites-enabled/my_bbs.conf
+
 
 ➜  ~ cat /etc/supervisor/conf.d/my_bbs.conf
 
