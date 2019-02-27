@@ -5,7 +5,7 @@ from bbs import app
 
 
 sys.path.insert(0, abspath(dirname(__file__)))
-application = app.app
+application = app
 
 """
 建立一个软连接（右边指向左边）
