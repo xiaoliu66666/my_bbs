@@ -64,11 +64,11 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right">
-                    {% if u.is_developer() %}
+
                     <a href="{{ url_for('.profile')}}" class="dropdown-item">
                         <i class="fa fa-lock"></i> 个人信息
                     </a>
-                    {% else %}
+
 
                     <a href="{{ url_for('.logout')}}" class="dropdown-item">
                         <i class="fa fa-lock"></i> 注销
