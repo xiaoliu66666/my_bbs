@@ -80,6 +80,38 @@
 #
 # if __name__ == '__main__':
 #     socketio.run(app, debug=True)
-
-
-import profile
+# from functools import wraps
+#
+# from flask import request, render_template, Flask
+#
+# from utils.redis_cache import RCache
+#
+#
+# cache = RCache()
+# app = Flask(__name__)
+#
+#
+# def cached(timeout=5 * 60, key='view_%s'):
+#     def decorator(f):
+#         @wraps(f)
+#         def decorated_function(*args, **kwargs):
+#             cache_key = key % request.path
+#             value = cache.get_data(cache_key)
+#             if value is None:
+#                 value = f(*args, **kwargs)
+#                 cache.set_data(cache_key, value, ex=timeout)
+#             return value
+#         return decorated_function
+#     return decorator
+#
+#
+# @app.route('/hello')
+# @app.route('/hello/<name>')
+# @cached()
+# def hello(name=None):
+#     print('view hello called')
+#     return 'hello, {}'.format(name)
+#
+#
+# if __name__ == '__main__':
+#     app.run()

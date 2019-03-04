@@ -1,3 +1,6 @@
+"""
+登录权限装饰器
+"""
 from functools import wraps
 
 from flask import session, url_for

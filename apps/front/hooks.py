@@ -1,3 +1,6 @@
+"""
+在request上下文中添加一个g.front_user的全局变量
+"""
 from .views import main
 from config import FRONT_USER_ID
 from flask import session, g

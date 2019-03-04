@@ -343,7 +343,7 @@ class LoginView(views.MethodView):
             password = form.password.data
             remember = form.remember.data
             user = CMSUser.query.filter_by(email=email).first()
-            if user is not None and user.check_password(password):
+            if user and user.check_password(password):
                 session[CMS_USER_ID] = user.id
                 if remember is not None:
                     session.permanent = True

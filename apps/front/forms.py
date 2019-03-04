@@ -1,3 +1,6 @@
+"""
+表单验证
+"""
 from wtforms import (
     StringField,
     IntegerField,

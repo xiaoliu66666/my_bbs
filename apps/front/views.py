@@ -21,17 +21,20 @@ from apps.common.models import (
     HighlightPostModel,
 )
 from .forms import RegisterForm, LoginForm, AddPostForm, AddCommentForm
-from utils import xjson, safe_url, spider
-from config import FRONT_USER_ID, PER_PAGE
+from utils import xjson, safe_url, spider, log
+from utils.redis_cache import cached
+from config import FRONT_USER_ID, PER_PAGE, EXPIRE_CACHED_PAGE_TO_REDIS
 from .decorators import login_required
 from flask_paginate import get_page_parameter, Pagination
 from exts import collections
+
 import threading
 
 main = Blueprint("front", __name__)
 
 
 @main.route("/")
+@cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS)
 def index():
     # log("request：", request)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
@@ -45,13 +48,15 @@ def index():
     # 帖子排序
     sort = request.args.get("st", type=int, default=1)
     if sort == 1:
+        # 默认排序:按照发布时间倒序
         query = PostModel.query.order_by(PostModel.create_time.desc())
     elif sort == 2:
         # 按照加精的时间倒序
         query = db.session.query(PostModel).join(HighlightPostModel).order_by(
             HighlightPostModel.create_time.desc())
     elif sort == 3:
-        # 按照阅读的数量排序,todo:点赞功能没有做
+        # 按照阅读的数量排序,
+        # todo:点赞功能还没有做
         query = PostModel.query.order_by(PostModel.view_count.desc())
     elif sort == 4:
         # 按照评论的数量排序
@@ -84,12 +89,14 @@ def index():
 @main.route('/acomment/', methods=['POST'])
 @login_required
 def acomment():
+    # 添加评论
     form = AddCommentForm(request.form)
     if form.validate():
         content = form.content.data
         post_id = form.post_id.data
         post = PostModel.query.get(post_id)
-        if post is not None:
+        if post:
+            # 如果帖子存在，就把评论写入数据库
             comment = CommentModel(content=content)
             comment.post = post
             comment.author = g.front_user
@@ -103,7 +110,10 @@ def acomment():
 
 
 @main.route("/p/<pid>")
+@cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS)
 def detail(pid):
+    # 帖子详情页面
+    # log("request path:", request.path)
     post = PostModel.query.get(pid)
     comments = CommentModel.query.filter_by(post_id=pid)
     counts = comments.count()
@@ -122,6 +132,7 @@ def detail(pid):
 @main.route("/apost/", methods=["GET", "POST"])
 @login_required
 def apost():
+    # 添加帖子
     if request.method == "GET":
         if "front_user" not in g.__dict__:
             return redirect(url_for('.login'))
@@ -157,6 +168,7 @@ def logout():
 @main.route("/movies/")
 @login_required
 def movies():
+    # 电影板块
     _movies = collections.find().limit(10)
     return render_template('front/front_movies.html', movies=_movies)
 
@@ -164,6 +176,7 @@ def movies():
 @main.route("/new/", methods=["GET", "POST"])
 @login_required
 def new():
+    # 开始后台爬取电影
     t = threading.Thread(target=spider.spider)
     t.setDaemon(True)
     t.start()
@@ -173,6 +186,7 @@ def new():
 class RegisterView(views.MethodView):
     def get(self):
         # log("host_url: ", request.host_url)
+        # return_to为前一个跳转页面
         return_to = request.referrer
         if return_to and return_to != request.url and safe_url.is_safe_url(return_to):
             return render_template('front/front_register.html', return_to=return_to)
@@ -215,8 +229,9 @@ class LoginView(views.MethodView):
             remember = form.remember.data
             user = FrontUser.query.filter_by(telephone=telephone).first()
             if user and user.check_password(password):
+                # 如果用户存在就把user.id写入session
                 session[FRONT_USER_ID] = user.id
-                if remember is not None:
+                if remember:
                     session.permanent = True
                 return xjson.success()
             else:

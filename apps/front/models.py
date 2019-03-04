@@ -27,13 +27,14 @@ class FrontUser(db.Model):
     gender = db.Column(db.Enum(GenderEnum), default=GenderEnum.UNKNOWN)
     join_time = db.Column(db.DateTime, default=datetime.now)
 
+    # 登录时先获取密码，再调用check_password验证是否密码一致
     def __init__(self, *args, **kwargs):
         if "password" in kwargs:
             self.password = kwargs.get("password", "")
             kwargs.pop("password")
         super().__init__(*args, **kwargs)
 
-
+    # 利用@property装饰器来实现加密密码
     @property
     def password(self):
         return self._password
