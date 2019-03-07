@@ -27,14 +27,13 @@ from config import FRONT_USER_ID, PER_PAGE, EXPIRE_CACHED_PAGE_TO_REDIS
 from .decorators import login_required
 from flask_paginate import get_page_parameter, Pagination
 from exts import collections
-
 import threading
 
 main = Blueprint("front", __name__)
 
 
 @main.route("/")
-@cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS)
+# @cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS)
 def index():
     # log("request：", request)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
