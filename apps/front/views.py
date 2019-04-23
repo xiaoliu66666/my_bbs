@@ -109,7 +109,7 @@ def acomment():
 
 
 @main.route("/p/<pid>")
-@cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS)
+@cached(timeout=EXPIRE_CACHED_PAGE_TO_REDIS, key='detail/{}')
 def detail(pid):
     # 帖子详情页面
     # log("request path:", request.path)

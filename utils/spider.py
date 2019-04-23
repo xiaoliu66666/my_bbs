@@ -81,7 +81,7 @@ def parse_detail_page(url):
 
 
 def spider():
-    base_url = "http://www.dytt8.net/html/gndy/dyzz/list_23_{}.html"
+    base_url = "http://www.ygdy8.net/html/gndy/dyzz/list_23_{}.html"
 
     for i in range(1, 2):
         url = base_url.format(i)
