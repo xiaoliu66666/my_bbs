@@ -32,11 +32,11 @@ class RCache:
 cache = RCache()
 
 
-def cached(timeout=None, key='view_%s'):
+def cached(timeout=None, key='view_%{}'):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            cache_key = key % request.path
+            cache_key = key.format(request.path)
             value = cache.get_data(cache_key)
             if value is None:
                 value = f(*args, **kwargs)
