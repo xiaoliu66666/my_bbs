@@ -23,7 +23,7 @@ itsdangerous==1.1.0
 Jinja2==2.10
 kombu==4.2.2.post1
 lxml==4.3.1
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.1.0
 monotonic==1.5
 Pillow==5.4.1
